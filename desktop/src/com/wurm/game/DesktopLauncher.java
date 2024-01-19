@@ -8,7 +8,7 @@ import com.wurm.game.Wurm;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		config.setForegroundFPS(140);
+		config.setForegroundFPS(60);
 		config.setTitle("Da ist der Wurm drin");
 		new Lwjgl3Application(new Wurm(), config);
 	}
