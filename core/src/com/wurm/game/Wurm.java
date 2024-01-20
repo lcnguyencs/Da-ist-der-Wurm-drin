@@ -1,4 +1,4 @@
-package com.lcnguyencs.src;
+package com.wurm.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
