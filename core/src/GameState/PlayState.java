@@ -1,5 +1,181 @@
 package GameState;
 
-public class PlayState {
-    
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.wurm.game.*;
+
+import Entities.Tick;
+import Entities.Worm;
+import Entities.Box;
+import Entities.Dice;
+import Managers.GameStateManager;
+
+public class PlayState implements Screen {
+
+    public Wurm game;
+    public OrthographicCamera gamecam;
+    public Viewport gamePort;
+    public TmxMapLoader mapLoader;
+    public TiledMap map;
+    public Texture sewage;
+    public Texture sewage1;
+    public Texture line1;
+    public Texture line2;
+    public Texture notiBox;
+    public static Worm[] worms = new Worm[4];
+    public Box[][] flowers = new Box[4][4];
+    public Box[][] strawberries = new Box[4][4];
+    public Tick[][] ticks = new Tick[4][4];
+    public Dice dice;
+    public OrthogonalTiledMapRenderer renderer;
+    public BitmapFont font;
+    public SpriteBatch spriteBatch;
+
+    public boolean isMainState1 = false;
+    public boolean isMainState2 = false;
+    public boolean isMainState3 = false;
+    public boolean isMoveBox1 = false;
+    public boolean isMoveBox2 = false;
+    public float countBonus1 = 0;
+    public float countBonus2 = 0;
+    public float textX, textY;
+    public String currentPlayer, bonusMove = "";
+    public BitmapFont turnFont, notiFont, nameFont;
+    public float timeEndState;
+
+    GlyphLayout layout = new GlyphLayout();
+
+    private GameStateManager gsm;
+
+    public PlayState(Wurm game, GameStateManager gsm) {
+        this.gsm = gsm;
+
+        this.game = game;
+        gamecam = new OrthographicCamera();
+        gamePort = new FitViewport(Wurm.V_WIDTH, Wurm.V_HEIGHT, gamecam);
+        mapLoader = new TmxMapLoader();
+        map = mapLoader.load("img/PlayState/backgroundPlayState.tmx");
+        renderer = new OrthogonalTiledMapRenderer(map);
+        gamecam.position.set(Wurm.V_WIDTH / 2, Wurm.V_HEIGHT / 2, 0);
+
+        //load worms images
+        worms[0] = new Worm("img/PlayState/worms/Little Gritty.png", game.batch, -1170, 0, "Little Gritty", 0,false);
+        worms[1] = new Worm("img/PlayState/worms/Lady Silver.png", game.batch, -1170, 150, "Lady Silver", 0,false);
+        worms[2] = new Worm("img/PlayState/worms/Rudy Red.png", game.batch, -1170, 300, "Rudy Red", 0,false);
+        worms[3] = new Worm("img/PlayState/worms/StripyToni.png", game.batch, -1170, 450, "StripyToni", 0,false);
+
+        //load sewage images
+        sewage = new Texture("img/PlayState/sewages/Sewage.png");
+        sewage1 = new Texture("img/PlayState/sewages/Sewage1.png");
+
+        //load line between worms
+        line1 = new Texture("img/PlayState/lines/line1.png");
+        line2 = new Texture("img/PlayState/lines/line2.png");
+        notiBox = new Texture("img/notiBox.png");
+
+        //load dices
+        dice = new Dice(game.batch, 1160, 595);
+
+        //load flowers and strawberries
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                flowers[i][0] = new Box("img/PlayState/flowers/flower0.png", game.batch, 480, 43 + (150 * i), i, false);
+                flowers[i][1] = new Box("img/PlayState/flowers/flower1.png", game.batch, 480 + 75, 43 + (150 * i), i, false);
+                flowers[i][2] = new Box("img/PlayState/flowers/flower2.png", game.batch, 480 + 75 * 2, 43 + (150 * i), i, false);
+                flowers[i][3] = new Box("img/PlayState/flowers/flower3.png", game.batch, 480 + 75 * 3, 43 + (150 * i), i, false);
+
+                strawberries[i][0] = new Box("img/PlayState/strawberries/strawberry0.png", game.batch, 860, 43 + (150 * i), i, false);
+                strawberries[i][1] = new Box("img/PlayState/strawberries/strawberry1.png", game.batch, 860 + 75, 43 + (150 * i), i, false);
+                strawberries[i][2] = new Box("img/PlayState/strawberries/strawberry2.png", game.batch, 860 + 75 * 2, 43 + (150 * i), i, false);
+                strawberries[i][3] = new Box("img/PlayState/strawberries/strawberry3.png", game.batch, 860 + 75 * 3, 43 + (150 * i), i, false);
+
+                ticks[i][j] = new Tick("img/PlayState/boxBlack.png", game.batch, 480 + 75 * j, 43 + (150 * i), i, false);
+            }
+        }
+
+        //font setting
+        font = new BitmapFont();
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
+                Gdx.files.internal("font/KOMTXT__.ttf")
+        );
+        FreeTypeFontGenerator.FreeTypeFontParameter param_turnFont = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        param_turnFont.size = 30;
+        param_turnFont.borderWidth = 1;
+        param_turnFont.borderColor = Color.BLACK;
+        turnFont = generator.generateFont(param_turnFont);
+        turnFont.setColor(Color.WHITE);
+
+        FreeTypeFontGenerator.FreeTypeFontParameter param_notiFont = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        param_notiFont.size = 40;
+        param_notiFont.borderWidth = 1;
+        param_notiFont.borderColor = Color.BLACK;
+        notiFont = generator.generateFont(param_notiFont);
+        notiFont.setColor(Color.RED);
+
+        FreeTypeFontGenerator.FreeTypeFontParameter param_nameFont = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        param_nameFont.size = 32;
+        param_nameFont.borderWidth = 3;
+        param_nameFont.borderColor = Color.BLACK;
+        nameFont = generator.generateFont(param_nameFont);
+        nameFont.setColor(Color.YELLOW);
+    }
+
+    @Override
+    public void show() {
+    }
+    public void handleInput(float dt) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+            System.out.println("Clicked");
+        }
+    }
+    public void update(float dt) {
+        handleInput(dt);
+        //update camera
+        gamecam.update();
+        renderer.setView(gamecam);
+    }
+
+    @Override
+    public void render(float delta) {
+        update(delta);
+        //clear the screen
+        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        gamePort.update(width, height);
+    }
+
+    @Override
+    public void pause() {
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
+    public void hide() {
+    }
+
+    @Override
+    public void dispose() {
+    }
 }
