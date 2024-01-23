@@ -16,7 +16,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.wurm.game.*;
+import com.lcnguyencs.src.Wurm;
 
 import Entities.Tick;
 import Entities.Worm;
@@ -139,13 +139,34 @@ public class PlayState implements Screen {
     public void show() {
     }
     public void handleInput(float dt) {
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isTouched()) {
             System.out.println("Clicked");
         }
     }
     public void update(float dt) {
         handleInput(dt);
-        //update camera
+
+        for (int i = 0; i < 4; i++) {
+            worms[i].update();
+        }
+        dice.update();
+
+        if (!isMoveBox1){
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    flowers[i][j].update();
+                }
+            }
+        }
+
+        if (!isMoveBox2){
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
+                    strawberries[i][j].update();
+                }
+            }
+        }
+
         gamecam.update();
         renderer.setView(gamecam);
     }
@@ -156,6 +177,221 @@ public class PlayState implements Screen {
         //clear the screen
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        renderer.render();
+        game.batch.setProjectionMatrix(gamecam.combined);
+
+        //begin render
+        game.batch.begin();
+
+            //draw worms
+            for (int i = 0; i < 4; i++) {
+                worms[i].render();
+            }
+            //draw lines
+            for (int i = 0; i < 4; i++) {
+                game.batch.draw(line1, 0, 150 * i);
+                game.batch.draw(line2, 0, 150 * i + 130);
+            }
+            //draw dice
+            dice.render();
+            //draw sewage
+            for (int i=0; i<4; i++){
+                game.batch.draw(sewage, 80 + 20, 150*i);
+                game.batch.draw(sewage, 460 + 20, 150*i);
+                game.batch.draw(sewage1, 840 + 20, 150*i);
+                //draw names
+                nameFont.draw(game.batch, worms[i].id, 155, 110 + 150 * i);
+            }
+
+            //draw notification box
+            game.batch.draw(notiBox, 365, 630);
+            if (worms[0].point != 0){
+                String turnText = worms[(dice.getTurn() + 3) % 4].id + " moved " + Integer.toString(Dice.currentNumber) + " moves!";
+                layout.setText(notiFont, turnText);
+                textX = 365 + (notiBox.getWidth() - layout.width) / 2;
+                textY = 630 + (notiBox.getHeight() + layout.height) / 2;
+                notiFont.draw(game.batch,turnText,textX,textY);
+            } else {
+                String sologan = "Let's go!";
+                layout.setText(notiFont, sologan);
+                textX = 365 + (notiBox.getWidth() - layout.width) / 2;
+                textY = 630 + (notiBox.getHeight() + layout.height) / 2;
+                notiFont.draw(game.batch,sologan,textX,textY);
+            }
+
+            //Switch PlayState 1 and 2
+            if (worms[3].getPoint() != 0){
+                isMainState1 = true;
+            }
+            for (int i = 0; i < 4; i++){
+                if (worms[i].getPoint() > 20){
+                    isMainState1 = false;
+                    isMainState2 = true;
+                    if (!isMoveBox1){
+                        for (int j = 0; j < 4; j++){
+                            //update bonus
+                            if (ticks[i][j].status){
+                                worms[j].move(3);
+                                worms[j].bonus = true;
+                            }
+                        }
+                        for (int j = 0; j < 4; j ++){
+                            for (int k = 0 ; k < 4; k++) {
+                                ticks[j][k].status = false;
+                                ticks[j][k].x += 380;
+                            }
+                        }
+                        isMoveBox1 = true;
+                    }
+                }
+            }
+
+            //Game State 1
+            if (isMainState1){
+                //draw boxes state 1
+                for (int i = 0; i < 4; i++){
+                    for (int j = 0; j < 4; j++)
+                        flowers[i][j].render();
+                }
+                //draw ticks state 1
+                for (int i = 0; i < 4; i++){
+                    for (int j = 0; j < 4; j++){
+                        if (ticks[i][j].status){
+                            ticks[i][j].render();
+                        }
+                    }
+                }
+                //check ticks
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                    float mousex = Gdx.input.getX();
+                    float mousey = Gdx.graphics.getHeight() - Gdx.input.getY();
+                    for (int i = 0; i < 4; i++){
+                        for (int j = 0; j < 4; j++){
+                            if (ticks[i][j].check(mousex,mousey)){
+                                if (ticks[i][j].status){
+                                    ticks[i][j].status = false;
+                                } else {
+                                    for (int k = 0; k < 4; k ++){
+                                        ticks[k][j].status = false;
+                                    }
+                                    ticks[i][j].status = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Switch between GameState 2 and 3
+            for (int i = 0; i < 4; i++){
+                if (worms[i].getPoint() > 39){
+                    isMainState2 = false;
+                    isMainState3 = true;
+                    if (!isMoveBox2){
+                        bonusMove = "";
+                        for (int j = 0; j < 4; j ++){
+                            if (ticks[i][j].status){
+                                worms[j].move(3);
+                                worms[j].bonus = true;
+                            }
+                        }
+                        isMoveBox2 = true;
+                    }
+                    for (int k=0; k<4; k++){
+                        game.batch.draw(sewage1, 840 + 20, 150*k);
+                    }
+                }
+            }
+
+            // Game State 2
+            if (isMainState2){
+                //draw boxes state 1
+                for (int i = 0; i < 4; i++){
+                    for (int j = 0; j < 4; j++)
+                        strawberries[i][j].render();
+                }
+                //draw ticks state 2
+                for (int i = 0; i < 4; i++){
+                    for (int j = 0; j < 4; j++){
+                        if (ticks[i][j].status){
+                            ticks[i][j].render();
+                        }
+                    }
+                }
+                //check ticks
+                if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+                    float mousex = Gdx.input.getX();
+                    float mousey = Gdx.graphics.getHeight() - Gdx.input.getY();
+                    for (int i = 0; i < 4; i++){
+                        for (int j = 0; j < 4; j++){
+                            if (ticks[i][j].check(mousex,mousey)){
+                                if (ticks[i][j].status){
+                                    ticks[i][j].status = false;
+                                } else {
+                                    for (int k = 0; k < 4; k ++){
+                                        ticks[k][j].status = false;
+                                    }
+                                    ticks[i][j].status = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Game State 3
+            if (isMainState3){
+                for (int i = 0; i < 4; i ++){
+                    if (worms[i].getPoint() >= 55){
+                        game.batch.draw(notiBox, 365, 630);
+                        String winnerText = "Snake " + worms[i].id + " win!";
+                        layout.setText(notiFont, winnerText);
+                        textX = 365 + (notiBox.getWidth() - layout.width) / 2;
+                        textY = 630 + (notiBox.getHeight() + layout.height) / 2;
+                        notiFont.draw(game.batch,winnerText,textX,textY);
+
+                        timeEndState += delta;
+                        if (timeEndState >= 3)
+                            gsm.push(new EndState(game, gsm));
+                    }
+                }
+            }
+
+            currentPlayer = worms[dice.getTurn()].id +" turn!";
+
+            turnFont.draw(game.batch, currentPlayer, 30, 680);
+
+            //display bonus for worms in StateGame 2
+            if (isMainState2){
+                if (countBonus1 <= 7){
+                    for (int i=0; i<4; i++){
+                        if (worms[i].bonus) {
+                            nameFont.draw(game.batch, "+ 3 moves!", 160, 70 + 150 * i);
+                        }
+                    }
+                    countBonus1 += delta;
+                }
+                else if (countBonus1 > 7 && countBonus1 < 8) {
+                    for (int i = 0; i < 4; i++){
+                        worms[i].bonus = false;
+                    }
+                }
+            }
+
+            //Display bonus for worms in GameState 3
+            if (isMainState3)
+            {
+                if (countBonus2 <= 7){
+                    for (int i=0; i<4; i++){
+                        if (worms[i].bonus)
+                            nameFont.draw(game.batch, "+ 3 moves!", 160, 70 + 150 * i);
+                    }
+                    countBonus2 += delta;
+                }
+            }
+
+        game.batch.end();       //box end
     }
 
     @Override
@@ -177,5 +413,53 @@ public class PlayState implements Screen {
 
     @Override
     public void dispose() {
+        // Dispose existing disposables
+        font.dispose();
+        spriteBatch.dispose();
+
+        // Dispose textures
+        sewage.dispose();
+        sewage1.dispose();
+        line1.dispose();
+        line2.dispose();
+        notiBox.dispose();
+
+        // Dispose of the map and renderer
+        map.dispose();
+        renderer.dispose();
+
+        // Dispose of the sound if it's loaded
+        // if (sound != null) sound.dispose();
+
+        // Dispose of the font generator (if you have one)
+        // generator.dispose();
+
+        // Dispose of the dice
+        dice.dispose();
+
+        // Dispose of the entities (worms, boxes, ticks) that have textures or other disposable resources
+        for (Worm worm : worms) {
+            //snake.dispose();
+        }
+        for (Box[] boxRow : flowers) {
+            for (Box box : boxRow) {
+                //box.dispose();
+            }
+        }
+        for (Box[] boxRow : strawberries) {
+            for (Box box : boxRow) {
+                //box.dispose();
+            }
+        }
+        for (Tick[] tickRow : ticks) {
+            for (Tick tick : tickRow) {
+                //tick.dispose();
+            }
+        }
+
+        // Dispose of the fonts
+        turnFont.dispose();
+        notiFont.dispose();
+        nameFont.dispose();
     }
 }
