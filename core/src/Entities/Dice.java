@@ -48,4 +48,29 @@ public class Dice {
             }
         }
     }
+
+    public void render(){
+        batch.draw(texture[(currentNumber + 5) % 6], x, y);
+    }
+
+    public void sound(){
+        dm = Gdx.audio.newMusic(Gdx.files.internal("music/diceSound.mp3"));
+        dm.setVolume(0.1F * dmVolume);
+        dm.play();
+    }
+    public int roll(){
+
+        return (int)(Math.random() * 6) % 6;
+    }
+    public void dispose(){
+        // Dispose of the Texture array elements
+        for (Texture dieTexture : texture) {
+            if (dieTexture != null) dieTexture.dispose();
+        }
+
+        // Dispose of the Music object if it's been initialized
+        if (dm != null) {
+            dm.dispose();
+        }
+    }
 }
