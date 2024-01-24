@@ -16,21 +16,23 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.wurm.game.*;
+import com.lcnguyencs.src.Wurm;
 
 import Entities.Tick;
 import Entities.Worm;
 import Entities.Box;
 import Entities.Dice;
-import Manager.GameStateManager;
+import Managers.GameStateManager;
 
 public class PlayState implements Screen {
-
     public Wurm game;
     public OrthographicCamera gamecam;
     public Viewport gamePort;
     public TmxMapLoader mapLoader;
     public TiledMap map;
+    public OrthogonalTiledMapRenderer renderer;
+    public BitmapFont font;
+    public SpriteBatch spriteBatch;
     public Texture sewage;
     public Texture sewage1;
     public Texture line1;
@@ -41,10 +43,6 @@ public class PlayState implements Screen {
     public Box[][] strawberries = new Box[4][4];
     public Tick[][] ticks = new Tick[4][4];
     public Dice dice;
-    public OrthogonalTiledMapRenderer renderer;
-    public BitmapFont font;
-    public SpriteBatch spriteBatch;
-
     public boolean isMainState1 = false;
     public boolean isMainState2 = false;
     public boolean isMainState3 = false;
@@ -56,14 +54,11 @@ public class PlayState implements Screen {
     public String currentPlayer, bonusMove = "";
     public BitmapFont turnFont, notiFont, nameFont;
     public float timeEndState;
-
-    GlyphLayout layout = new GlyphLayout();
-
+    public GlyphLayout layout = new GlyphLayout();
     private GameStateManager gsm;
 
     public PlayState(Wurm game, GameStateManager gsm) {
         this.gsm = gsm;
-
         this.game = game;
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Wurm.V_WIDTH, Wurm.V_HEIGHT, gamecam);
@@ -113,6 +108,7 @@ public class PlayState implements Screen {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
                 Gdx.files.internal("font/KOMTXT__.ttf")
         );
+
         FreeTypeFontGenerator.FreeTypeFontParameter param_turnFont = new FreeTypeFontGenerator.FreeTypeFontParameter();
         param_turnFont.size = 30;
         param_turnFont.borderWidth = 1;
@@ -254,7 +250,7 @@ public class PlayState implements Screen {
                     for (int j = 0; j < 4; j++)
                         flowers[i][j].render();
                 }
-                //draw ticks state 1
+                //draw ticks game state 1
                 for (int i = 0; i < 4; i++){
                     for (int j = 0; j < 4; j++){
                         if (ticks[i][j].status){
@@ -262,24 +258,9 @@ public class PlayState implements Screen {
                         }
                     }
                 }
-                //check ticks
+                //update betting game state 1
                 if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                    float mousex = Gdx.input.getX();
-                    float mousey = Gdx.graphics.getHeight() - Gdx.input.getY();
-                    for (int i = 0; i < 4; i++){
-                        for (int j = 0; j < 4; j++){
-                            if (ticks[i][j].check(mousex,mousey)){
-                                if (ticks[i][j].status){
-                                    ticks[i][j].status = false;
-                                } else {
-                                    for (int k = 0; k < 4; k ++){
-                                        ticks[k][j].status = false;
-                                    }
-                                    ticks[i][j].status = true;
-                                }
-                            }
-                        }
-                    }
+                    updateBetting(ticks);
                 }
             }
 
@@ -311,7 +292,7 @@ public class PlayState implements Screen {
                     for (int j = 0; j < 4; j++)
                         strawberries[i][j].render();
                 }
-                //draw ticks state 2
+                //draw ticks game state 2
                 for (int i = 0; i < 4; i++){
                     for (int j = 0; j < 4; j++){
                         if (ticks[i][j].status){
@@ -319,24 +300,9 @@ public class PlayState implements Screen {
                         }
                     }
                 }
-                //check ticks
+                //update betting game state 2
                 if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-                    float mousex = Gdx.input.getX();
-                    float mousey = Gdx.graphics.getHeight() - Gdx.input.getY();
-                    for (int i = 0; i < 4; i++){
-                        for (int j = 0; j < 4; j++){
-                            if (ticks[i][j].check(mousex,mousey)){
-                                if (ticks[i][j].status){
-                                    ticks[i][j].status = false;
-                                } else {
-                                    for (int k = 0; k < 4; k ++){
-                                        ticks[k][j].status = false;
-                                    }
-                                    ticks[i][j].status = true;
-                                }
-                            }
-                        }
-                    }
+                    updateBetting(ticks);
                 }
             }
 
@@ -345,7 +311,7 @@ public class PlayState implements Screen {
                 for (int i = 0; i < 4; i ++){
                     if (worms[i].getPoint() >= 55){
                         game.batch.draw(notiBox, 365, 630);
-                        String winnerText = "Snake " + worms[i].id + " win!";
+                        String winnerText = worms[i].id + " win!";
                         layout.setText(notiFont, winnerText);
                         textX = 365 + (notiBox.getWidth() - layout.width) / 2;
                         textY = 630 + (notiBox.getHeight() + layout.height) / 2;
@@ -358,8 +324,8 @@ public class PlayState implements Screen {
                 }
             }
 
+            //draw worm's turn
             currentPlayer = worms[dice.getTurn()].id +" turn!";
-
             turnFont.draw(game.batch, currentPlayer, 30, 680);
 
             //display bonus for worms in StateGame 2
@@ -379,7 +345,7 @@ public class PlayState implements Screen {
                 }
             }
 
-            //Display bonus for worms in GameState 3
+            //display bonus for worms in GameState 3
             if (isMainState3)
             {
                 if (countBonus2 <= 7){
@@ -390,8 +356,27 @@ public class PlayState implements Screen {
                     countBonus2 += delta;
                 }
             }
+        //box end
+        game.batch.end();
+    }
 
-        game.batch.end();       //box end
+    public void updateBetting(Tick tick[][]){
+        float mousex = Gdx.input.getX();
+        float mousey = Gdx.graphics.getHeight() - Gdx.input.getY();
+        for (int i = 0; i < 4; i++){
+            for (int j = 0; j < 4; j++){
+                if (ticks[i][j].check(mousex,mousey)){
+                    if (ticks[i][j].status){
+                        ticks[i][j].status = false;
+                    } else {
+                        for (int k = 0; k < 4; k ++){
+                            ticks[k][j].status = false;
+                        }
+                        ticks[i][j].status = true;
+                    }
+                }
+            }
+        }
     }
 
     @Override
