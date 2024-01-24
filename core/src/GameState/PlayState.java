@@ -16,13 +16,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.lcnguyencs.src.Wurm;
-
+import com.wurm.game.*;
 import Entities.Tick;
 import Entities.Worm;
 import Entities.Box;
 import Entities.Dice;
-import Managers.GameStateManager;
+import Manager.GameStateManager;
 
 public class PlayState implements Screen {
     public Wurm game;
@@ -135,7 +134,7 @@ public class PlayState implements Screen {
     public void show() {
     }
     public void handleInput(float dt) {
-        if (Gdx.input.isTouched()) {
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             System.out.println("Clicked");
         }
     }
