@@ -357,7 +357,7 @@ public class PlayState implements Screen {
             }
         //box end
         game.batch.end();
-    }
+    }  
 
     public void updateBetting(Tick tick[][]){
         float mousex = Gdx.input.getX();
