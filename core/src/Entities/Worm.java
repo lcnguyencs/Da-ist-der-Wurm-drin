@@ -21,4 +21,19 @@ public class Worm {
         this.point = point;
         this.bonus = bonus;
     }
+
+    public int getPoint(){
+        return this.point;
+    }
+
+    public void update(){
+    }
+
+    public void render(){
+        batch.draw(snakeHead, x, y);
+    }
+    public void move(int step){
+        x = x + step * 20;
+        point += step;
+    }
 }
