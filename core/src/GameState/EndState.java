@@ -66,4 +66,93 @@ public class EndState implements Screen {
         buttonFont = generator.generateFont(param_fontButton);
         buttonFont.setColor(Color.RED);
     }
+
+    @Override
+    public void show() {
+        // Initialize your End resources here (buttons, backgrounds, etc.)
+    }
+
+    public void handleInput(float dt) {
+        if (Gdx.input.isTouched()) {
+            System.out.println("Clicked");
+        }
+        gamecamEnd.update();
+        rendererEnd.setView(gamecamEnd);
+    }
+    public void update(float dt){
+        handleInput(dt);
+    }
+
+    @Override
+    public void render(float delta) {
+        update(delta);
+        countTime += delta;
+
+        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        rendererEnd.render();
+        game.batch.setProjectionMatrix(gamecamEnd.combined);
+
+        batch.begin();
+
+        game.batch.draw(newgameButton,770, 350);
+        game.batch.draw(exitButton, 800, 250);
+
+        String newgameText = "New game";
+        layout.setText(buttonFont, newgameText);
+        float textX = 770 + (newgameButton.getWidth() - layout.width) / 2;
+        float textY = 350 + (newgameButton.getHeight() + layout.height) / 2;
+        buttonFont.draw(game.batch,newgameText,textX,textY);
+
+        String exitText = "Exit";
+        layout.setText(buttonFont, exitText);
+        textX = 800 + (exitButton.getWidth() - layout.width) / 2;
+        textY = 250 + (exitButton.getHeight() + layout.height) / 2;
+        buttonFont.draw(game.batch,exitText,textX,textY);
+
+
+        batch.end();
+
+        if (Gdx.input.isTouched()) {
+            int x = Gdx.input.getX();
+            int y = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+            if (x >= 770 && x <= 800 + 220 &&
+                    y >= 350 && y <= 350 + 70) {
+                if (wm.isPlaying()) {
+                    wm.stop();
+                }
+                GameStateManager.bgm.play();
+                gsm.push(new PlayState(game, gsm));
+            }
+
+            if (x >= 800 && x <= 800 + 160 &&
+                    y >= 250 && y <= 250 + 70) {
+                Gdx.app.exit();
+            }
+
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        gamePortEnd.update(width, height);
+    }
+
+    @Override
+    public void pause() { }
+
+    @Override
+    public void resume() { }
+
+    @Override
+    public void hide() { }
+
+    @Override
+    public void dispose() {
+        //fontEnd.dispose();
+        //batch.dispose();
+        // Dispose of your End resources when they are no longer needed
+    }
 }
