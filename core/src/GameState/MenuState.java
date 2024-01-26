@@ -19,68 +19,62 @@ import com.wurm.game.Wurm;
 
 import Manager.GameStateManager;
 
-public class SettingState implements Screen{
+public class MenuState implements Screen {
+
     public Wurm game;
     public SpriteBatch batch;
     public float countTime;
-    public OrthographicCamera gamecamSetting;
-    public Viewport gamePortSetting;
-
-    public TmxMapLoader mapLoaderSetting;
-    public TiledMap mapSetting;
-    public OrthogonalTiledMapRenderer rendererSetting;
-    public Texture volumeUpButton, volumeDownButton, doneButton;
-    public GlyphLayout layout;
-    public BitmapFont buttonFont, buttonFont1;
-
+    public OrthographicCamera gamecamMenu;
+    public Viewport gamePortMenu;
+    public TmxMapLoader mapLoaderMenu;
+    public TiledMap mapMenu;
+    public OrthogonalTiledMapRenderer rendererMenu;
+    public Texture playButton, exitButton, settingButton, wood;
+    public BitmapFont buttonFont;
     private GameStateManager gsm;
 
-    public SettingState(Wurm game, GameStateManager gsm) {
+    public MenuState(Wurm game,  GameStateManager gsm) {
+
         this.gsm = gsm;
 
         this.game = game;
         this.batch = game.batch;
-        gamecamSetting = new OrthographicCamera();
-        gamePortSetting = new FitViewport(Wurm.V_WIDTH, Wurm.V_HEIGHT, gamecamSetting);
+        gamecamMenu = new OrthographicCamera();
+        gamePortMenu = new FitViewport(Wurm.V_WIDTH, Wurm.V_HEIGHT, gamecamMenu);
 
-        mapLoaderSetting = new TmxMapLoader();
-        mapSetting = mapLoaderSetting.load("map/backgroundMenu.tmx");
-        rendererSetting = new OrthogonalTiledMapRenderer(mapSetting);
-        gamecamSetting.position.set(Wurm.V_WIDTH / 2, Wurm.V_HEIGHT / 2, 0);
+        mapLoaderMenu = new TmxMapLoader();
+        mapMenu = mapLoaderMenu.load("map/backgroundMenu.tmx");
+        rendererMenu = new OrthogonalTiledMapRenderer(mapMenu);
+        gamecamMenu.position.set(Wurm.V_WIDTH / 2, Wurm.V_HEIGHT / 2, 0);
 
-        volumeUpButton = new Texture("img/squareButton.png");
-        volumeDownButton = new Texture("img/squareButton.png");
-        doneButton = new Texture("img/PlayButtonNew.png");
+        playButton = new Texture("img/PlayButtonNew.png");
+        settingButton = new Texture("img/PlayButtonNew.png");
+        exitButton = new Texture("img/PlayButtonNew.png");
+        wood = new Texture("img/wood.png");
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
                 Gdx.files.internal("font/KOMTXT__.ttf")
         );
+
         FreeTypeFontGenerator.FreeTypeFontParameter param_fontButton = new FreeTypeFontGenerator.FreeTypeFontParameter();
         param_fontButton.size = 40;
         param_fontButton.borderWidth = 1;
         param_fontButton.borderColor = Color.BLACK;
         buttonFont = generator.generateFont(param_fontButton);
         buttonFont.setColor(Color.RED);
-
-        FreeTypeFontGenerator.FreeTypeFontParameter param_fontButton1 = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        param_fontButton1.size = 60;
-        param_fontButton1.borderWidth = 1;
-        param_fontButton1.borderColor = Color.BLACK;
-        buttonFont1 = generator.generateFont(param_fontButton1);
-        buttonFont1.setColor(Color.RED);
     }
 
     @Override
     public void show() {
-        // Initialize your Setting resources here (buttons, backgrounds, etc.)
+        // Initialize your menu resources here (buttons, backgrounds, etc.)
     }
 
     public void handleInput(float dt) {
         if (Gdx.input.isTouched()) {
             System.out.println("Clicked");
         }
-        gamecamSetting.update();
-        rendererSetting.setView(gamecamSetting);
+        gamecamMenu.update();
+        rendererMenu.setView(gamecamMenu);
     }
     public void update(float dt){
         handleInput(dt);
@@ -94,31 +88,34 @@ public class SettingState implements Screen{
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        rendererSetting.render();
-        game.batch.setProjectionMatrix(gamecamSetting.combined);
+        rendererMenu.render();
+        game.batch.setProjectionMatrix(gamecamMenu.combined);
 
         game.batch.begin();
-        game.batch.draw(volumeUpButton,900 - 80, 350);
-        game.batch.draw(volumeDownButton,900 + 170, 350);
-        game.batch.draw(doneButton,900, 250);
 
-        String lefText = "+";
-        layout.setText(buttonFont1, lefText);
-        float textX = 900 - 80 + (volumeUpButton.getWidth() - layout.width) / 2;
-        float textY = 350 + 5 + (volumeUpButton.getHeight() + layout.height) / 2;
-        buttonFont1.draw(game.batch,lefText,textX,textY);
+            game.batch.draw(wood,970,50);
+            game.batch.draw(playButton,900, 350);
+            game.batch.draw(settingButton,900, 250);
+            game.batch.draw(exitButton,900, 150);
 
-        String rightText = "-";
-        layout.setText(buttonFont1, rightText);
-        textX = 900 + 170 + (volumeDownButton.getWidth() - layout.width) / 2;
-        textY = 350 + 5 + (volumeDownButton.getHeight() + layout.height) / 2;
-        buttonFont1.draw(game.batch,rightText,textX,textY);
+            String playText = "Play";
+            GlyphLayout layout = new GlyphLayout();
+            layout.setText(buttonFont, playText);
+            float textX = 900 + (playButton.getWidth() - layout.width) / 2;
+            float textY = 350 + (playButton.getHeight() + layout.height) / 2;
+            buttonFont.draw(game.batch,playText,textX,textY);
 
-        String doneText = "Done";
-        layout.setText(buttonFont, doneText);
-        textX = 900 + (doneButton.getWidth() - layout.width) / 2;
-        textY = 250 + (doneButton.getHeight() + layout.height) / 2;
-        buttonFont.draw(game.batch,doneText,textX,textY);
+            String settingText = "Setting";
+            layout.setText(buttonFont, settingText);
+            textX = 900 + (settingButton.getWidth() - layout.width) / 2;
+            textY = 250 + (settingButton.getHeight() + layout.height) / 2;
+            buttonFont.draw(game.batch,settingText,textX,textY);
+
+            String exitText = "Exit";
+            layout.setText(buttonFont, exitText);
+            textX = 900 + (exitButton.getWidth() - layout.width) / 2;
+            textY = 150 + (exitButton.getHeight() + layout.height) / 2;
+            buttonFont.draw(game.batch,exitText,textX,textY);
 
         game.batch.end();
 
@@ -126,29 +123,29 @@ public class SettingState implements Screen{
             int x = Gdx.input.getX();
             int y = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-            if (x >= 900 && x <= 900 + doneButton.getWidth() &&
-                    y >= 250 && y <= 250 + doneButton.getHeight()) {
-                //back to MenuState
-                gsm.pop();
+            if (x >= 900 && x <= 900 + 160 &&
+                    y >= 350 && y <= 350 + 70) {
+                //game.setScreen(new PlayState(game));
+                gsm.push(new PlayState(game, gsm));
             }
-            // Volume up button
-            if (x >= 900 - 80 && x <= 900 - 80 + volumeUpButton.getWidth() &&
-                    y >= 350 && y <= 350 + volumeUpButton.getHeight()) {
-                GameStateManager.bgmVolume = Math.min(GameStateManager.bgmVolume + 0.1f, 1.0f); // Increase volume
-                GameStateManager.bgm.setVolume(GameStateManager.bgmVolume); // Apply new volume
+
+            if (x >= 900 && x <= 900 + settingButton.getWidth() &&
+                    y >= 250 && y <= 250 + settingButton.getHeight()) {
+                //game.setScreen(new SettingState(game));
+                gsm.push(new SettingState(game, gsm));
             }
-            // Volume down button
-            if (x >= 900 + 170 && x <= 900 + 170 + volumeDownButton.getWidth() &&
-                    y >= 350 && y <= 350 + volumeDownButton.getHeight()) {
-                GameStateManager.bgmVolume = Math.max(GameStateManager.bgmVolume - 0.1f, 0.0f); // Decrease volume
-                GameStateManager.bgm.setVolume(GameStateManager.bgmVolume); // Apply new volume
+
+            if (x >= 900 && x <= 900 + 160 &&
+                    y >= 150 && y <= 150 + 70) {
+                //Exit the game
+                Gdx.app.exit();
             }
         }
     }
 
     @Override
     public void resize(int width, int height) {
-        gamePortSetting.update(width, height);
+        gamePortMenu.update(width, height);
     }
 
     @Override
@@ -162,9 +159,5 @@ public class SettingState implements Screen{
 
     @Override
     public void dispose() {
-        //fontSetting.dispose();
-        //batch.dispose();
-        // Dispose of your Setting resources when they are no longer needed
     }
-
 }
