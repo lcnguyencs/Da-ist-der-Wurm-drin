@@ -16,12 +16,18 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.wurm.game.*;
+import com.wurm.game.Wurm;
+
 import Entities.Tick;
 import Entities.Worm;
 import Entities.Box;
 import Entities.Dice;
-import Manager.GameStateManager;
+import Managers.GameStateManager;
+
+/**
+ * This class represents the main game state. 
+ * It contains the logic for handling user input, updating the game state, and rendering the game.
+ */
 
 public class PlayState implements Screen {
     public Wurm game;
@@ -56,6 +62,13 @@ public class PlayState implements Screen {
     public GlyphLayout layout = new GlyphLayout();
     private GameStateManager gsm;
 
+    /**
+     * Constructor for the PlayState class. It initializes the GameStateManager and other necessary variables.
+     *
+     * @param game The current game instance.
+     * @param gsm The GameStateManager for managing game states.
+     */
+
     public PlayState(Wurm game, GameStateManager gsm) {
         this.gsm = gsm;
         this.game = game;
@@ -67,10 +80,10 @@ public class PlayState implements Screen {
         gamecam.position.set(Wurm.V_WIDTH / 2, Wurm.V_HEIGHT / 2, 0);
 
         //load worms images
-        worms[0] = new Worm("img/PlayState/worms/Little Gritty.png", game.batch, -1170, 0, "Little Gritty", 0,false);
-        worms[1] = new Worm("img/PlayState/worms/Lady Silver.png", game.batch, -1170, 150, "Lady Silver", 0,false);
-        worms[2] = new Worm("img/PlayState/worms/Rudy Red.png", game.batch, -1170, 300, "Rudy Red", 0,false);
-        worms[3] = new Worm("img/PlayState/worms/StripyToni.png", game.batch, -1170, 450, "StripyToni", 0,false);
+        worms[0] = new Worm("img/PlayState/worms/Little Gritty.png", Wurm.batch, -1170, 0, "Little Gritty", 0,false);
+        worms[1] = new Worm("img/PlayState/worms/Lady Silver.png", Wurm.batch, -1170, 150, "Lady Silver", 0,false);
+        worms[2] = new Worm("img/PlayState/worms/Rudy Red.png", Wurm.batch, -1170, 300, "Rudy Red", 0,false);
+        worms[3] = new Worm("img/PlayState/worms/StripyToni.png", Wurm.batch, -1170, 450, "StripyToni", 0,false);
 
         //load sewage images
         sewage = new Texture("img/PlayState/sewages/Sewage.png");
@@ -82,22 +95,22 @@ public class PlayState implements Screen {
         notiBox = new Texture("img/notiBox.png");
 
         //load dices
-        dice = new Dice(game.batch, 1160, 595);
+        dice = new Dice(Wurm.batch, 1160, 595);
 
         //load flowers and strawberries
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                flowers[i][0] = new Box("img/PlayState/flowers/flower0.png", game.batch, 480, 43 + (150 * i), i, false);
-                flowers[i][1] = new Box("img/PlayState/flowers/flower1.png", game.batch, 480 + 75, 43 + (150 * i), i, false);
-                flowers[i][2] = new Box("img/PlayState/flowers/flower2.png", game.batch, 480 + 75 * 2, 43 + (150 * i), i, false);
-                flowers[i][3] = new Box("img/PlayState/flowers/flower3.png", game.batch, 480 + 75 * 3, 43 + (150 * i), i, false);
+                flowers[i][0] = new Box("img/PlayState/flowers/flower0.png", Wurm.batch, 480, 43 + (150 * i), i, false);
+                flowers[i][1] = new Box("img/PlayState/flowers/flower1.png", Wurm.batch, 480 + 75, 43 + (150 * i), i, false);
+                flowers[i][2] = new Box("img/PlayState/flowers/flower2.png", Wurm.batch, 480 + 75 * 2, 43 + (150 * i), i, false);
+                flowers[i][3] = new Box("img/PlayState/flowers/flower3.png", Wurm.batch, 480 + 75 * 3, 43 + (150 * i), i, false);
 
-                strawberries[i][0] = new Box("img/PlayState/strawberries/strawberry0.png", game.batch, 860, 43 + (150 * i), i, false);
-                strawberries[i][1] = new Box("img/PlayState/strawberries/strawberry1.png", game.batch, 860 + 75, 43 + (150 * i), i, false);
-                strawberries[i][2] = new Box("img/PlayState/strawberries/strawberry2.png", game.batch, 860 + 75 * 2, 43 + (150 * i), i, false);
-                strawberries[i][3] = new Box("img/PlayState/strawberries/strawberry3.png", game.batch, 860 + 75 * 3, 43 + (150 * i), i, false);
+                strawberries[i][0] = new Box("img/PlayState/strawberries/strawberry0.png", Wurm.batch, 860, 43 + (150 * i), i, false);
+                strawberries[i][1] = new Box("img/PlayState/strawberries/strawberry1.png", Wurm.batch, 860 + 75, 43 + (150 * i), i, false);
+                strawberries[i][2] = new Box("img/PlayState/strawberries/strawberry2.png", Wurm.batch, 860 + 75 * 2, 43 + (150 * i), i, false);
+                strawberries[i][3] = new Box("img/PlayState/strawberries/strawberry3.png", Wurm.batch, 860 + 75 * 3, 43 + (150 * i), i, false);
 
-                ticks[i][j] = new Tick("img/PlayState/boxBlack.png", game.batch, 480 + 75 * j, 43 + (150 * i), i, false);
+                ticks[i][j] = new Tick("img/PlayState/boxBlack.png", Wurm.batch, 480 + 75 * j, 43 + (150 * i), i, false);
             }
         }
 
@@ -133,11 +146,23 @@ public class PlayState implements Screen {
     @Override
     public void show() {
     }
+
+    /**
+     * Handles user input. If the left mouse button is clicked, it prints "Clicked" to the console.
+     *
+     * @param dt The time delta since the last frame.
+     */
     public void handleInput(float dt) {
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
+        if (Gdx.input.isTouched()) {
             System.out.println("Clicked");
         }
     }
+
+     /**
+     * Updates the game state.
+     *
+     * @param dt The time delta since the last frame.
+     */
     public void update(float dt) {
         handleInput(dt);
 
@@ -146,6 +171,7 @@ public class PlayState implements Screen {
         }
         dice.update();
 
+        //update flowers and strawberries
         if (!isMoveBox1){
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
@@ -161,11 +187,16 @@ public class PlayState implements Screen {
                 }
             }
         }
-
+        //update camera
         gamecam.update();
         renderer.setView(gamecam);
     }
 
+    /**
+     * Renders the game state.
+     *
+     * @param delta The time delta since the last frame.
+     */
     @Override
     public void render(float delta) {
         update(delta);
@@ -174,10 +205,10 @@ public class PlayState implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();
-        game.batch.setProjectionMatrix(gamecam.combined);
+        Wurm.batch.setProjectionMatrix(gamecam.combined);
 
         //begin render
-        game.batch.begin();
+        Wurm.batch.begin();
 
             //draw worms
             for (int i = 0; i < 4; i++) {
@@ -185,37 +216,37 @@ public class PlayState implements Screen {
             }
             //draw lines
             for (int i = 0; i < 4; i++) {
-                game.batch.draw(line1, 0, 150 * i);
-                game.batch.draw(line2, 0, 150 * i + 130);
+                Wurm.batch.draw(line1, 0, 150 * i);
+                Wurm.batch.draw(line2, 0, 150 * i + 130);
             }
             //draw dice
             dice.render();
             //draw sewage
             for (int i=0; i<4; i++){
-                game.batch.draw(sewage, 80 + 20, 150*i);
-                game.batch.draw(sewage, 460 + 20, 150*i);
-                game.batch.draw(sewage1, 840 + 20, 150*i);
+                Wurm.batch.draw(sewage, 80 + 20, 150*i);
+                Wurm.batch.draw(sewage, 460 + 20, 150*i);
+                Wurm.batch.draw(sewage1, 840 + 20, 150*i);
                 //draw names
-                nameFont.draw(game.batch, worms[i].id, 155, 110 + 150 * i);
+                nameFont.draw(Wurm.batch, worms[i].id, 155, 110 + 150 * i);
             }
 
             //draw notification box
-            game.batch.draw(notiBox, 365, 630);
+            Wurm.batch.draw(notiBox, 365, 630);
             if (worms[0].point != 0){
                 String turnText = worms[(dice.getTurn() + 3) % 4].id + " moved " + Integer.toString(Dice.currentNumber) + " moves!";
                 layout.setText(notiFont, turnText);
                 textX = 365 + (notiBox.getWidth() - layout.width) / 2;
                 textY = 630 + (notiBox.getHeight() + layout.height) / 2;
-                notiFont.draw(game.batch,turnText,textX,textY);
+                notiFont.draw(Wurm.batch,turnText,textX,textY);
             } else {
                 String sologan = "Let's go!";
                 layout.setText(notiFont, sologan);
                 textX = 365 + (notiBox.getWidth() - layout.width) / 2;
                 textY = 630 + (notiBox.getHeight() + layout.height) / 2;
-                notiFont.draw(game.batch,sologan,textX,textY);
+                notiFont.draw(Wurm.batch,sologan,textX,textY);
             }
 
-            //Switch PlayState 1 and 2
+            //Switch games state 1 to 2
             if (worms[3].getPoint() != 0){
                 isMainState1 = true;
             }
@@ -244,7 +275,7 @@ public class PlayState implements Screen {
 
             //Game State 1
             if (isMainState1){
-                //draw boxes state 1
+                //draw boxes game state 1
                 for (int i = 0; i < 4; i++){
                     for (int j = 0; j < 4; j++)
                         flowers[i][j].render();
@@ -263,7 +294,7 @@ public class PlayState implements Screen {
                 }
             }
 
-            //Switch between GameState 2 and 3
+            //Switch games state 2 to 3
             for (int i = 0; i < 4; i++){
                 if (worms[i].getPoint() > 39){
                     isMainState2 = false;
@@ -279,14 +310,14 @@ public class PlayState implements Screen {
                         isMoveBox2 = true;
                     }
                     for (int k=0; k<4; k++){
-                        game.batch.draw(sewage1, 840 + 20, 150*k);
+                        Wurm.batch.draw(sewage1, 840 + 20, 150*k);
                     }
                 }
             }
 
             // Game State 2
             if (isMainState2){
-                //draw boxes state 1
+                //draw boxes game state 2
                 for (int i = 0; i < 4; i++){
                     for (int j = 0; j < 4; j++)
                         strawberries[i][j].render();
@@ -309,14 +340,15 @@ public class PlayState implements Screen {
             if (isMainState3){
                 for (int i = 0; i < 4; i ++){
                     if (worms[i].getPoint() >= 55){
-                        game.batch.draw(notiBox, 365, 630);
+                        Wurm.batch.draw(notiBox, 365, 630);
                         String winnerText = worms[i].id + " win!";
                         layout.setText(notiFont, winnerText);
                         textX = 365 + (notiBox.getWidth() - layout.width) / 2;
                         textY = 630 + (notiBox.getHeight() + layout.height) / 2;
-                        notiFont.draw(game.batch,winnerText,textX,textY);
+                        notiFont.draw(Wurm.batch,winnerText,textX,textY);
 
                         timeEndState += delta;
+                        //switch to end state
                         if (timeEndState >= 3)
                             gsm.push(new EndState(game, gsm));
                     }
@@ -325,14 +357,14 @@ public class PlayState implements Screen {
 
             //draw worm's turn
             currentPlayer = worms[dice.getTurn()].id +" turn!";
-            turnFont.draw(game.batch, currentPlayer, 30, 680);
+            turnFont.draw(Wurm.batch, currentPlayer, 30, 680);
 
             //display bonus for worms in StateGame 2
             if (isMainState2){
                 if (countBonus1 <= 7){
                     for (int i=0; i<4; i++){
                         if (worms[i].bonus) {
-                            nameFont.draw(game.batch, "+ 3 moves!", 160, 70 + 150 * i);
+                            nameFont.draw(Wurm.batch, "+ 3 moves!", 160, 70 + 150 * i);
                         }
                     }
                     countBonus1 += delta;
@@ -350,15 +382,18 @@ public class PlayState implements Screen {
                 if (countBonus2 <= 7){
                     for (int i=0; i<4; i++){
                         if (worms[i].bonus)
-                            nameFont.draw(game.batch, "+ 3 moves!", 160, 70 + 150 * i);
+                            nameFont.draw(Wurm.batch, "+ 3 moves!", 160, 70 + 150 * i);
                     }
                     countBonus2 += delta;
                 }
             }
         //box end
-        game.batch.end();
-    }  
-
+        Wurm.batch.end();
+    }
+    /**
+     * Update the betting box
+     * @param tick
+     */
     public void updateBetting(Tick tick[][]){
         float mousex = Gdx.input.getX();
         float mousey = Gdx.graphics.getHeight() - Gdx.input.getY();
@@ -377,6 +412,13 @@ public class PlayState implements Screen {
             }
         }
     }
+
+    /**
+     * Resizes the game viewport when the window size changes.
+     *
+     * @param width The new window width.
+     * @param height The new window height.
+     */
 
     @Override
     public void resize(int width, int height) {
@@ -397,53 +439,5 @@ public class PlayState implements Screen {
 
     @Override
     public void dispose() {
-        // Dispose existing disposables
-        font.dispose();
-        spriteBatch.dispose();
-
-        // Dispose textures
-        sewage.dispose();
-        sewage1.dispose();
-        line1.dispose();
-        line2.dispose();
-        notiBox.dispose();
-
-        // Dispose of the map and renderer
-        map.dispose();
-        renderer.dispose();
-
-        // Dispose of the sound if it's loaded
-        // if (sound != null) sound.dispose();
-
-        // Dispose of the font generator (if you have one)
-        // generator.dispose();
-
-        // Dispose of the dice
-        dice.dispose();
-
-        // Dispose of the entities (worms, boxes, ticks) that have textures or other disposable resources
-        for (Worm worm : worms) {
-            //snake.dispose();
-        }
-        for (Box[] boxRow : flowers) {
-            for (Box box : boxRow) {
-                //box.dispose();
-            }
-        }
-        for (Box[] boxRow : strawberries) {
-            for (Box box : boxRow) {
-                //box.dispose();
-            }
-        }
-        for (Tick[] tickRow : ticks) {
-            for (Tick tick : tickRow) {
-                //tick.dispose();
-            }
-        }
-
-        // Dispose of the fonts
-        turnFont.dispose();
-        notiFont.dispose();
-        nameFont.dispose();
     }
 }
