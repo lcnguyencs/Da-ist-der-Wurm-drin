@@ -22,7 +22,7 @@ import Entities.Tick;
 import Entities.Worm;
 import Entities.Box;
 import Entities.Dice;
-import Managers.GameStateManager;
+import Manager.GameStateManager;
 
 /**
  * This class represents the main game state. 

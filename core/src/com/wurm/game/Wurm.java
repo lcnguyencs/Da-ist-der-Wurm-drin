@@ -3,7 +3,7 @@ package com.wurm.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import GameState.MenuState;
-import Managers.GameStateManager;
+import Manager.GameStateManager;
 
 public class Wurm extends Game {
     public static final int V_WIDTH = 1280;

@@ -1,6 +1,7 @@
 package GameState;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -19,8 +20,12 @@ import com.wurm.game.Wurm;
 
 import Manager.GameStateManager;
 
+/**
+ * This class represents the menu state of the game. 
+ * It contains the logic for handling user input, updating the game state, and rendering the game.
+ */
 public class MenuState implements Screen {
-
+    // Declare necessary variables for the menu state   
     public Wurm game;
     public SpriteBatch batch;
     public float countTime;
@@ -33,25 +38,29 @@ public class MenuState implements Screen {
     public BitmapFont buttonFont;
     private GameStateManager gsm;
 
+    /**
+     * Constructor for the MenuState class. It initializes the GameStateManager and other necessary variables.
+     *
+     * @param game The current game instance.
+     * @param gsm The GameStateManager for managing menu states.
+     */
     public MenuState(Wurm game,  GameStateManager gsm) {
-
         this.gsm = gsm;
-
         this.game = game;
-        this.batch = game.batch;
+        this.batch = Wurm.batch;
+        //load map
         gamecamMenu = new OrthographicCamera();
         gamePortMenu = new FitViewport(Wurm.V_WIDTH, Wurm.V_HEIGHT, gamecamMenu);
-
         mapLoaderMenu = new TmxMapLoader();
-        mapMenu = mapLoaderMenu.load("map/backgroundMenu.tmx");
+        mapMenu = mapLoaderMenu.load("map/MenuState/backgroundMenu.tmx");
         rendererMenu = new OrthogonalTiledMapRenderer(mapMenu);
         gamecamMenu.position.set(Wurm.V_WIDTH / 2, Wurm.V_HEIGHT / 2, 0);
-
-        playButton = new Texture("img/PlayButtonNew.png");
-        settingButton = new Texture("img/PlayButtonNew.png");
-        exitButton = new Texture("img/PlayButtonNew.png");
-        wood = new Texture("img/wood.png");
-
+        //load button
+        playButton = new Texture("img/rectangleButton.png");
+        settingButton = new Texture("img/rectangleButton.png");
+        exitButton = new Texture("img/rectangleButton.png");
+        wood = new Texture("img/MenuState/wood.png");
+        //load font
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(
                 Gdx.files.internal("font/KOMTXT__.ttf")
         );
@@ -66,60 +75,71 @@ public class MenuState implements Screen {
 
     @Override
     public void show() {
-        // Initialize your menu resources here (buttons, backgrounds, etc.)
     }
 
+    /**
+     * Handles user input. If the screen is touched, it prints "Clicked" to the console.
+     *
+     * @param dt The time delta since the last frame.
+     */
     public void handleInput(float dt) {
         if (Gdx.input.isTouched()) {
             System.out.println("Clicked");
         }
+        // Update camera and renderer view
         gamecamMenu.update();
         rendererMenu.setView(gamecamMenu);
     }
+
     public void update(float dt){
         handleInput(dt);
     }
 
+    /**
+     * Renders the setting state.
+     *
+     * @param delta The time delta since the last frame.
+     */
     @Override
     public void render(float delta) {
         update(delta);
         countTime += delta;
-
+        //clear screen
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         rendererMenu.render();
-        game.batch.setProjectionMatrix(gamecamMenu.combined);
+        Wurm.batch.setProjectionMatrix(gamecamMenu.combined);
 
-        game.batch.begin();
-
-            game.batch.draw(wood,970,50);
-            game.batch.draw(playButton,900, 350);
-            game.batch.draw(settingButton,900, 250);
-            game.batch.draw(exitButton,900, 150);
-
+        Wurm.batch.begin();
+            //draw button
+            Wurm.batch.draw(wood,970,50);
+            Wurm.batch.draw(playButton,900, 350);
+            Wurm.batch.draw(settingButton,900, 250);
+            Wurm.batch.draw(exitButton,900, 150);
+            //draw text
             String playText = "Play";
             GlyphLayout layout = new GlyphLayout();
             layout.setText(buttonFont, playText);
             float textX = 900 + (playButton.getWidth() - layout.width) / 2;
             float textY = 350 + (playButton.getHeight() + layout.height) / 2;
-            buttonFont.draw(game.batch,playText,textX,textY);
+            buttonFont.draw(Wurm.batch,playText,textX,textY);
 
-            String settingText = "Setting";
+            String settingText = "Volume";
             layout.setText(buttonFont, settingText);
             textX = 900 + (settingButton.getWidth() - layout.width) / 2;
             textY = 250 + (settingButton.getHeight() + layout.height) / 2;
-            buttonFont.draw(game.batch,settingText,textX,textY);
+            buttonFont.draw(Wurm.batch,settingText,textX,textY);
 
             String exitText = "Exit";
             layout.setText(buttonFont, exitText);
             textX = 900 + (exitButton.getWidth() - layout.width) / 2;
             textY = 150 + (exitButton.getHeight() + layout.height) / 2;
-            buttonFont.draw(game.batch,exitText,textX,textY);
+            buttonFont.draw(Wurm.batch,exitText,textX,textY);
 
-        game.batch.end();
-
-        if (Gdx.input.justTouched()) {
+        Wurm.batch.end();
+        // Handle user input
+        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
             int x = Gdx.input.getX();
             int y = Gdx.graphics.getHeight() - Gdx.input.getY();
 
