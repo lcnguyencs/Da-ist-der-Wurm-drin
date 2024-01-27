@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.wurm.game.Wurm;
 
-import Managers.GameStateManager;
+import Manager.GameStateManager;
 
 /**
  * This class represents the end state of the game. 
