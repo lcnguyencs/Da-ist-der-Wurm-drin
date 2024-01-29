@@ -90,7 +90,7 @@ public class SettingState implements Screen{
      */
     public void handleInput(float dt) {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            System.out.println("Clicked");
+            //System.out.println("Clicked");
         }
         // Update camera and renderer view
         gamecamSetting.update();

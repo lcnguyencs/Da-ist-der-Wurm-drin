@@ -153,9 +153,9 @@ public class PlayState implements Screen {
      * @param dt The time delta since the last frame.
      */
     public void handleInput(float dt) {
-        if (Gdx.input.isTouched()) {
-            System.out.println("Clicked");
-        }
+        // if (Gdx.input.isTouched()) {
+        //     System.out.println("Clicked");
+        // }
     }
 
      /**

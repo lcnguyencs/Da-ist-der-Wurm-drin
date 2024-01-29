@@ -55,7 +55,7 @@ public class Dice {
         if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
             float mouse_x = Gdx.input.getX();
             float mouse_y = Gdx.graphics.getHeight() - Gdx.input.getY();
-            System.out.println(mouse_x + " " + mouse_y);
+            //System.out.println(mouse_x + " " + mouse_y);
             if ((mouse_x >= x && mouse_y >= y) && ((mouse_x <= x+texture[0].getWidth()) && (mouse_y <= y + texture[0].getHeight())))
             {
                 currentNumber = roll() + 1;
@@ -63,9 +63,9 @@ public class Dice {
                 PlayState.worms[turn].move(currentNumber);
                 turn = (turn + 1) % 4;
             }
-            for (int i = 0; i < 4; i++){
-                System.out.println("Point of snake " + i + " = " + PlayState.worms[i].getPoint());
-            }
+            // for (int i = 0; i < 4; i++){
+            //     System.out.println("Point of snake " + i + " = " + PlayState.worms[i].getPoint());
+            // }
         }
     }
 
