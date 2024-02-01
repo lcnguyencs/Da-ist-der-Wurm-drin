@@ -86,8 +86,8 @@ public class PlayState implements Screen {
         worms[3] = new Worm("img/PlayState/worms/StripyToni.png", Wurm.batch, -1170, 450, "StripyToni", 0,false);
 
         //load sewage images
-        sewage = new Texture("img/PlayState/sewages/Sewage.png");
-        sewage1 = new Texture("img/PlayState/sewages/Sewage1.png");
+        sewage = new Texture("img/PlayState/sewages/sewage.png");
+        sewage1 = new Texture("img/PlayState/sewages/sewage1.png");
 
         //load line between worms
         line1 = new Texture("img/PlayState/lines/line1.png");
@@ -153,9 +153,6 @@ public class PlayState implements Screen {
      * @param dt The time delta since the last frame.
      */
     public void handleInput(float dt) {
-        // if (Gdx.input.isTouched()) {
-        //     System.out.println("Clicked");
-        // }
     }
 
      /**

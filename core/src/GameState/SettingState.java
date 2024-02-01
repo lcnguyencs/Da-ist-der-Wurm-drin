@@ -1,7 +1,6 @@
 package GameState;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -89,9 +88,6 @@ public class SettingState implements Screen{
      * @param dt The time delta since the last frame.
      */
     public void handleInput(float dt) {
-        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {
-            //System.out.println("Clicked");
-        }
         // Update camera and renderer view
         gamecamSetting.update();
         rendererSetting.setView(gamecamSetting);

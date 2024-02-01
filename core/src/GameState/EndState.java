@@ -89,9 +89,6 @@ public class EndState implements Screen {
      * @param dt The time delta since the last frame.
      */
     public void handleInput(float dt) {
-        if (Gdx.input.isTouched()) {
-            System.out.println("Clicked");
-        }
         // Update camera and renderer view
         gamecamEnd.update();
         rendererEnd.setView(gamecamEnd);
