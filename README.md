@@ -2,7 +2,7 @@
 An Java game project in Java OOP Programming modules (FRA-UAS)
 # Report
 [Overleaf LaTeX report ](https://www.overleaf.com/read/wrdtwrgtzyrh#f45528)
-# UI 
+# UI/UX
 ## Menu State
 ![alt text](UI/start.png)
 
