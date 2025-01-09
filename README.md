@@ -94,7 +94,7 @@ Download the prebuilt executable to run the game directly on your system:
 ## Project Report
 
 The full project report is available here:
-- [LaTeX report(Preview PDF)](UI/Game%20Report.pdf)
+- [LaTeX report (Preview PDF)](UI/Game%20Report.pdf)
 
 ---
 
