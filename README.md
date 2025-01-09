@@ -101,7 +101,7 @@ The full project report is available here:
 ## Poster
 
 View the game poster here:
-- [Game Poster](link-to-poster)
+- [Game Poster (Preview PDF)](UI/Game%20Poster.pdf)
 
 ---
 
