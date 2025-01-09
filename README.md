@@ -102,7 +102,6 @@ The full project report is available here:
 
 View the game poster here:
 - [Game Poster (Preview PDF)](UI/Game%20Poster.pdf)
-- <iframe src="UI/Game%20Poster.pdf" width="100%" height="600px"></iframe>
 
 ---
 
