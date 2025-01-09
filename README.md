@@ -96,11 +96,6 @@ Download the prebuilt executable to run the game directly on your system:
 The full project report is available here:
 - [Overleaf LaTeX report](https://www.overleaf.com/read/wrdtwrgtzyrh#f45528)
 
-### Additional Information from Draft
-- **Game Mechanics:** The game involves dynamic challenges with increasing difficulty levels.
-- **Unique Features:** Includes power-ups and special game modes.
-- **Target Audience:** Suitable for all ages with intuitive controls.
-
 ---
 
 ## Poster
