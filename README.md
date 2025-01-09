@@ -12,8 +12,6 @@ An Java game project in Java OOP Programming modules (FRA-UAS)
 5. [UI/UX](#uiux)
 6. [Project Report](#project-report)
 7. [Poster](#poster)
-8. [Credits](#credits)
-
 ---
 
 ## Prerequisites
@@ -102,14 +100,6 @@ The full project report is available here:
 
 View the game poster here:
 - [Game Poster (Preview PDF)](UI/Game%20Poster.pdf)
-
----
-
-## Credits
-
-- **Developer:** Your Name
-- **Framework:** LibGDX
-- **Additional Libraries:** List any additional libraries used
 
 ---
 
